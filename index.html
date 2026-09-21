@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>拉多夫利察與蜂蜜 | 極東義大利・阿爾卑斯養蜂首都數位策展導覽</title>
+  <meta name="description" content="深入探索斯洛維尼亞養蜂之都拉多夫利察（Radovljica），解構卡尼鄂拉灰蜂、世界蜜蜂日之父安東·揚夏、彩繪蜂箱板民間藝術、百年薑餅手作與蜂療文化。">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Noto+Serif+TC:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Leaflet CSS (Local preferred for file:// protocol, CDN fallback) -->
+  <link rel="stylesheet" href="lib/leaflet.css" />
+  <script>
+    if (!document.querySelector('link[href="lib/leaflet.css"]')) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      document.head.appendChild(link);
+    }
+  </script>
+
+  <!-- Three.js (3D Animation) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Leaflet JS (Local preferred for file:// protocol, CDN fallback) -->
+  <script src="lib/leaflet.js"></script>
+  <script>
+    if (typeof L === 'undefined') {
+      document.write('<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script>');
+    }
+  </script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- 頂部導航列 -->
+  <header class="navbar">
+    <a href="#" class="nav-brand">
+      <div class="nav-brand-icon"><i class="fa-solid fa-wheat-awn-circle-exclamation"></i></div>
+      <div class="nav-brand-text">
+        <h1>RADOVLJICA</h1>
+        <span>Slovenska Prestolnica Čebelarstva</span>
+      </div>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#heritage" class="nav-link">養蜂之魂</a></li>
+      <li><a href="#showcase" class="nav-link">實景典藏</a></li>
+      <li><a href="#art" class="nav-link">彩繪蜂箱板</a></li>
+      <li><a href="#jansa" class="nav-link">現代養蜂先驅</a></li>
+      <li><a href="#trail" class="nav-link">甜密漫遊地圖</a></li>
+      <li><a href="#sensory" class="nav-link">五感蜂療</a></li>
+    </ul>
+
+    <div class="nav-controls">
+      <button id="nav-sound-toggle" class="sound-toggle" aria-label="切換蜜蜂聲音">
+        <i class="fa-solid fa-volume-xmark"></i> 蜜蜂飛行原音
+      </button>
+      <span class="btn-unesco">
+        <i class="fa-solid fa-certificate"></i> 聯合國世界蜜蜂日
+      </span>
+      <button class="nav-toggle" aria-label="切換選單">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- HERO 首頁視覺：3D 蜜蜂群動態穿梭 -->
+  <section class="hero">
+    <!-- Three.js Canvas -->
+    <canvas id="bee-canvas"></canvas>
+    
+    <div class="hero-background-art"></div>
+    <div class="hero-hex-pattern"></div>
+
+    <div class="hero-container">
+      <div class="hero-badge">
+        <i class="fa-solid fa-seedling"></i> 阿爾卑斯與亞得里亞海的甜密之都
+      </div>
+      <h1 class="hero-title">
+        拉多夫利察 <br>
+        <span class="highlight">斯洛維尼亞的蜜蜂之魂</span>
+      </h1>
+      <p class="hero-subtitle">
+        在朱利安阿爾卑斯山的雪峰之下，這座中世紀古城孕育了全球第二大蜂種「卡尼鄂拉灰蜂」、現代養蜂學先驅安東·揚夏，以及全世界獨一無二的彩繪蜂箱板民俗藝術。
+      </p>
+
+      <div class="hero-actions">
+        <a href="#trail" class="btn-primary">
+          <i class="fa-solid fa-map-location-dot"></i> 探索蜜蜂探索步道
+        </a>
+        <button id="hero-sound-toggle" class="btn-secondary sound-toggle">
+          <i class="fa-solid fa-headphones"></i> 聆聽阿爾卑斯蜂鳴振翅
+        </button>
+      </div>
+
+      <!-- 核心關鍵指標 -->
+      <div class="hero-stats">
+        <div class="stat-box">
+          <div class="stat-num">5 / 1000</div>
+          <div class="stat-desc">每千人養蜂人口（全球最高）</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">5 月 20 日</div>
+          <div class="stat-desc">聯合國「世界蜜蜂日」發源</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">50,000+</div>
+          <div class="stat-desc">歷史傳承彩繪蜂箱板典藏</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">1766 年</div>
+          <div class="stat-desc">Lectarstvo 傳統薑餅手作歷史</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1. 養蜂之魂：卡尼鄂拉蜂與文化深度 -->
+  <section id="heritage" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">National Heritage</span>
+        <h2 class="section-title">為什麼蜜蜂是斯洛維尼亞的國度印記？</h2>
+        <p class="section-desc">
+          養蜂在斯洛維尼亞不只是一項傳統產業，而是一種與自然共生的哲學，更被列為聯合國教科文組織非物質文化遺產。
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <i class="fa-solid fa-bug"></i>
+          </div>
+          <h3 class="feature-title">卡尼鄂拉灰蜂 (Carnica)</h3>
+          <p class="feature-text">
+            原生於喀斯特高原與阿爾卑斯山，以極其溫馴、耐寒抗飢、強大定向與高產蜜量著稱。斯洛維尼亞以國家法律嚴格保障其血統，禁止引進外來蜂種，維護生物多樣性。
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <i class="fa-solid fa-calendar-star"></i>
+          </div>
+          <h3 class="feature-title">世界蜜蜂日的誕生地</h3>
+          <p class="feature-text">
+            為喚醒全球對授粉昆蟲生態危機的重視，斯洛維尼亞養蜂協會向聯合國提案，正式將現代養蜂之父安東·揚夏的誕辰（5 月 20 日）指定為全球共同節日。
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <i class="fa-solid fa-palette"></i>
+          </div>
+          <h3 class="feature-title">蜂箱板上的鄉土幽默</h3>
+          <p class="feature-text">
+            18 至 20 世紀初發展出的「彩繪蜂箱板」，將聖徒守護、農村逸趣、魔鬼誘惑與動物諷刺生動呈現，成為全人類民俗學中絕無僅有的視覺奇觀。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. 實景田野典藏：使用者現場探訪鏡頭 -->
+  <section id="showcase" class="section user-gallery-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Field Expedition</span>
+        <h2 class="section-title">現場鏡頭：拉多夫利察的養蜂地景</h2>
+        <p class="section-desc">
+          見證傳統木工巨型蜜蜂雕像，以及座落於綠意山林間的經典彩繪木造蜂房（Čebelnjak）。
+        </p>
+      </div>
+
+      <div class="gallery-showcase">
+        <!-- 雕刻實景照 -->
+        <div class="photo-card">
+          <div class="photo-card-img-wrap">
+            <span class="photo-badge"><i class="fa-solid fa-camera"></i> 田野採集</span>
+            <img src="bee_wood_carving.jpg" alt="手工木雕卡尼鄂拉蜜蜂像">
+          </div>
+          <div class="photo-card-content">
+            <h3 class="photo-card-title">阿爾卑斯木雕守護蜂</h3>
+            <p class="photo-card-desc">
+              在林哈特古城外圍花園與蜂房入口，以粗獷原木細膩雕刻出的巨型卡尼鄂拉工蜂。背部紋理、羽翼脈絡與木質基座相映成趣，象徵斯洛維尼亞人對蜜蜂的由衷敬意。
+            </p>
+            <div class="photo-tags">
+              <span class="photo-tag">原生木雕</span>
+              <span class="photo-tag">卡尼鄂拉灰蜂</span>
+              <span class="photo-tag">工匠藝術</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 蜂房實景照 -->
+        <div class="photo-card">
+          <div class="photo-card-img-wrap">
+            <span class="photo-badge"><i class="fa-solid fa-camera"></i> 田野採集</span>
+            <img src="apiary_house.jpg" alt="傳統木製蜂舍與彩繪蜂箱牆">
+          </div>
+          <div class="photo-card-content">
+            <h3 class="photo-card-title">木造蜂舍與彩繪蜂箱牆 (Čebelnjak)</h3>
+            <p class="photo-card-desc">
+              典型斯洛維尼亞森林邊緣的養蜂小屋。右側牆面手繪童趣蜜蜂採蜜圖騰，正面整齊排列各色彩繪蜂箱巢門，在陽光照拂下，數萬隻工蜂正繁忙地往返採集高山花蜜。
+            </p>
+            <div class="photo-tags">
+              <span class="photo-tag">Čebelnjak 蜂房</span>
+              <span class="photo-tag">蜂巢幾何</span>
+              <span class="photo-tag">森林蜜露</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. 彩繪蜂箱板藝廊 (Panjske Končnice) -->
+  <section id="art" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Folk Art Gallery</span>
+        <h2 class="section-title">彩繪蜂箱板：封存於木板上的民俗靈魂</h2>
+        <p class="section-desc">
+          每塊蜂箱板都是蜂巢的門戶，更是 18 世紀村民的情感寄託。讓我們解讀最知名的三大經典主題：
+        </p>
+      </div>
+
+      <div class="gallery-grid">
+        <div class="art-panel-card">
+          <img src="beehive_panel.png" alt="彩繪蜂箱板：動物替獵人送葬" class="art-panel-img">
+          <div class="art-panel-info">
+            <div class="art-panel-genre">經典寓言主題</div>
+            <h3 class="art-panel-title">動物為獵人送葬 (Pogreb lovca)</h3>
+            <p class="art-panel-desc">
+              最著名的反轉諷刺畫！野兔抬著棺材、狐狸高舉十字架、鹿群為死去的獵人奏響哀樂，展現了農民對自然生態循環的詼諧敬畏。
+            </p>
+          </div>
+        </div>
+
+        <div class="art-panel-card">
+          <img src="carniolan_bee.png" alt="高山花卉與卡尼鄂拉灰蜂" class="art-panel-img">
+          <div class="art-panel-info">
+            <div class="art-panel-genre">生態自然崇拜</div>
+            <h3 class="art-panel-title">阿爾卑斯金黃授粉者</h3>
+            <p class="art-panel-desc">
+              在險峻高山花海中飛舞的灰蜂，採集雪絨花、高山薔薇與冷杉蜜露，蜂箱板經常細繪蜜蜂與聖安東尼聖徒的庇佑畫面。
+            </p>
+          </div>
+        </div>
+
+        <div class="art-panel-card">
+          <img src="lectar_heart.png" alt="拉多夫利察傳統蜜糖愛心薑餅" class="art-panel-img">
+          <div class="art-panel-info">
+            <div class="art-panel-genre">甜蜜愛情誓言</div>
+            <h3 class="art-panel-title">Lectar 蜜香愛心鏡 (Lectarstvo)</h3>
+            <p class="art-panel-desc">
+              純蜂蜜調配揉捏烘烤，紅色甜心正中央鑲嵌一面小鏡子。在市集裡送給心上人：「當你望向這顆心，你便看見了我心裡只有你。」
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. 歷史時間軸：揚夏與世界養蜂史 -->
+  <section id="jansa" class="section" style="background: #faf4e6;">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Historical Chronicle</span>
+        <h2 class="section-title">安東·揚夏與現代養蜂大革命</h2>
+        <p class="section-desc">
+          從布雷茲尼察的農村少年，到哈布斯堡女皇親授的帝國首席養蜂大師。
+        </p>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-year">1734 年</div>
+          <h3 class="timeline-title">誕生於阿爾卑斯山腳布雷茲尼察</h3>
+          <p class="timeline-desc">
+            安東·揚夏出生於養蜂世家，從小敏銳觀察卡尼鄂拉蜜蜂的生活習性，並兼修精緻繪畫技能。
+          </p>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-year">1769 年</div>
+          <h3 class="timeline-title">哈布斯堡女皇瑪麗亞·特蕾莎特聘</h3>
+          <p class="timeline-desc">
+            特蕾莎女皇深知養蜂對國家農業之重，在維也納奧格滕宮殿建立皇家養蜂學校，揚夏破格受聘為全帝國首任養蜂教師。
+          </p>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-year">1771 年</div>
+          <h3 class="timeline-title">出版劃時代《養蜂論 (Abhandlung vom Schwärmen der Bienen)》</h3>
+          <p class="timeline-desc">
+            率先以科學實證女王蜂與雄蜂在空中交尾的真相，並發明可多層堆疊、便於馬車載運轉場採蜜的「揚夏蜂箱」。
+          </p>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-year">2017 年</div>
+          <h3 class="timeline-title">聯合國正式通過「世界蜜蜂日」決議</h3>
+          <p class="timeline-desc">
+            為紀念安東·揚夏在現代養蜂業的卓越貢獻，聯合國大會無異議通過，定每年 5 月 20 日為世界蜜蜂日。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. 甜密漫遊地圖 (Leaflet Interactive Map) -->
+  <section id="trail" class="section map-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Interactive Map</span>
+        <h2 class="section-title">拉多夫利察養蜂散策步道</h2>
+        <p class="section-desc">
+          漫步於中世紀林哈特廣場、探訪地窖薑餅手作坊、養蜂博物館與揚夏故居。
+        </p>
+      </div>
+
+      <div class="map-wrapper">
+        <div id="map"></div>
+        <div class="map-sidebar">
+          <h3 class="map-sidebar-title">探索經典文化地標</h3>
+          <p class="map-sidebar-subtitle">點擊側邊項目在地圖中定位及瀏覽詳情</p>
+          <ul class="poi-list">
+            <li class="poi-item active" data-id="poi-museum">
+              <div class="poi-header">
+                <i class="fa-solid fa-building-columns poi-icon"></i>
+                <span class="poi-name">養蜂博物館 (Čebelarski muzej)</span>
+              </div>
+              <p class="poi-desc">展出歷史蜂箱彩繪、透視活體蜂巢與古董養蜂器具。</p>
+            </li>
+
+            <li class="poi-item" data-id="poi-lectar">
+              <div class="poi-header">
+                <i class="fa-solid fa-heart poi-icon"></i>
+                <span class="poi-name">百年愛心薑餅工坊 (Lectarstvo)</span>
+              </div>
+              <p class="poi-desc">自 1766 年傳承純手工蜜糖心型薑餅，設有地窖展示坊。</p>
+            </li>
+
+            <li class="poi-item" data-id="poi-square">
+              <div class="poi-header">
+                <i class="fa-solid fa-tree-city poi-icon"></i>
+                <span class="poi-name">林哈特廣場 (Linhartov trg)</span>
+              </div>
+              <p class="poi-desc">中世紀古風步道，四月舉辦斯洛維尼亞盛大巧克力與蜂蜜嘉年華。</p>
+            </li>
+
+            <li class="poi-item" data-id="poi-viewpoint">
+              <div class="poi-header">
+                <i class="fa-solid fa-mountain-sun poi-icon"></i>
+                <span class="poi-name">薩瓦河谷眺望台 (Sava Viewpoint)</span>
+              </div>
+              <p class="poi-desc">飽覽高山冰河谷與壯麗朱利安阿爾卑斯山脈。</p>
+            </li>
+
+            <li class="poi-item" data-id="poi-jansa">
+              <div class="poi-header">
+                <i class="fa-solid fa-hive poi-icon"></i>
+                <span class="poi-name">安東揚夏紀念蜂房 (Breznica)</span>
+              </div>
+              <p class="poi-desc">現代養蜂先驅的出生搖籃與復刻歷史蜂棚。</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. 五感蜂療體驗與蜂鳴音頻 (Apitherapy & Sensory) -->
+  <section id="sensory" class="section">
+    <div class="container">
+      <div class="sensory-box">
+        <div class="sensory-content">
+          <span class="section-tag" style="background: rgba(220,162,54,0.2); color: #ffd678; border-color: rgba(220,162,54,0.4);">Apitherapy</span>
+          <h3>阿爾卑斯蜂療與微氣候</h3>
+          <p>
+            走進傳統木造蜂舍（Čebelnjak），空氣中瀰漫著蜂蠟、蜂膠、花粉與高山精油交織的溫暖香氣。在斯洛維尼亞，人們透過吸入蜂巢微氣候空氣、聆聽每秒數百次翅膀高頻微震，達到舒緩呼吸道與身心沉靜的古老療癒境界。
+          </p>
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; color: #ffd154; font-size: 0.95rem;">
+              <i class="fa-solid fa-check-circle"></i> 蜂膠抗氧化霧化
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; color: #ffd154; font-size: 0.95rem;">
+              <i class="fa-solid fa-check-circle"></i> 200Hz 聲波共鳴
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; color: #ffd154; font-size: 0.95rem;">
+              <i class="fa-solid fa-check-circle"></i> 冷杉與森林蜜露
+            </div>
+          </div>
+        </div>
+
+        <div class="sensory-interactive">
+          <h4 style="font-family: var(--font-serif); font-size: 1.3rem; margin-bottom: 0.8rem; color: #ffd678;">
+            <i class="fa-solid fa-music"></i> 蜂箱聲音頻譜模擬器
+          </h4>
+          <p style="font-size: 0.88rem; color: #ccc; margin-bottom: 1.5rem;">
+            使用 Web Audio API 即時程序化合成工蜂採蜜與護巢的微頻音色：
+          </p>
+
+          <div class="bee-audio-visualizer">
+            <span class="vis-bar"></span>
+            <span class="vis-bar"></span>
+            <span class="vis-bar"></span>
+            <span class="vis-bar"></span>
+            <span class="vis-bar"></span>
+            <span class="vis-bar"></span>
+            <span class="vis-bar"></span>
+            <span class="vis-bar"></span>
+            <span class="vis-bar"></span>
+          </div>
+
+          <button id="box-sound-toggle" class="btn-primary sound-toggle" style="margin: 0 auto;">
+            <i class="fa-solid fa-volume-xmark"></i> 蜜蜂飛行原音
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 頁腳 -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <h2>Radovljica & Čebelarska Zgodba</h2>
+        <p>
+          「極東義大利與阿爾卑斯–亞得里亞深旅策展」。融合歷史深度、科學發明、民俗圖像學與當代沉浸式視聽科技，獻給熱愛生命與大自然探險的旅人。
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4>數位策展章節</h4>
+        <ul class="footer-links">
+          <li><a href="#heritage">卡尼鄂拉灰蜂傳奇</a></li>
+          <li><a href="#showcase">蜂房與原木雕塑</a></li>
+          <li><a href="#art">蜂箱彩繪藝術論</a></li>
+          <li><a href="#jansa">安東·揚夏生平</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>深度旅行導航</h4>
+        <ul class="footer-links">
+          <li><a href="#trail">老城探索地圖</a></li>
+          <li><a href="#sensory">蜂療與聲音體驗</a></li>
+          <li><a href="https://www.radolca.si/en" target="_blank" rel="noopener">Radovljica 官方觀光局</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 極東義大利深旅策展系列・拉多夫利察與蜂蜜篇</p>
+      <p>Slovenian Beekeeping Heritage & Interactive Curation</p>
+    </div>
+  </footer>
+
+  <!-- App Main Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>
