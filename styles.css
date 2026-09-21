@@ -236,7 +236,7 @@ body {
 .hero-background-art {
   position: absolute;
   inset: 0;
-  background-image: url('hero.png');
+  background-image: url('hero.jpg');
   background-size: cover;
   background-position: center;
   opacity: 0.28;
