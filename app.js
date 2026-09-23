@@ -384,9 +384,9 @@ function initLeafletMap() {
     attributionControl: false
   });
 
-  // Esri World Topo Map (Clear Alpine terrain, zero API key watermarks)
-  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
-    maxZoom: 18
+  // Standard OpenStreetMap Tile Layer (as used in friuli-far-east, clean & zero API key watermarks)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
   }).addTo(map);
 
   // Force Leaflet to recalculate container size
