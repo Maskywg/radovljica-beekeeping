@@ -384,10 +384,9 @@ function initLeafletMap() {
     attributionControl: false
   });
 
-  // CartoDB Voyager Tile Layer (Clean without watermark)
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-    subdomains: 'abcd',
-    maxZoom: 19
+  // Esri World Topo Map (Clear Alpine terrain, zero API key watermarks)
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 18
   }).addTo(map);
 
   // Force Leaflet to recalculate container size
