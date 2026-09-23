@@ -380,12 +380,12 @@ function initLeafletMap() {
     center: radovljicaCoords,
     zoom: 15,
     zoomControl: true,
-    scrollWheelZoom: false
+    scrollWheelZoom: false,
+    attributionControl: false
   });
 
-  // CartoDB Voyager Tile Layer (Reliable, fast, and warm aesthetic)
+  // CartoDB Voyager Tile Layer (Clean without watermark)
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
     subdomains: 'abcd',
     maxZoom: 19
   }).addTo(map);

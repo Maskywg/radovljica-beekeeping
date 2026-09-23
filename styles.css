@@ -738,6 +738,14 @@ body {
   width: 100%;
 }
 
+/* 隱藏地圖右下角浮水印與版權標籤 */
+.leaflet-control-attribution,
+.leaflet-bottom.leaflet-right .leaflet-control-attribution {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
 .map-sidebar {
   padding: 1.8rem;
   background: #fff;
